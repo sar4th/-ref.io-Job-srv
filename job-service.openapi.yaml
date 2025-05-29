@@ -1,0 +1,195 @@
+
+openapi: 3.0.3
+info:
+  title: Job Referral – Job Posting Service
+  version: 1.0.0
+  description: CRUD API for employees to post and manage job openings.
+
+servers:
+  - url: http://localhost:5001
+    description: Local development
+  - url: https://jobs.example.com
+    description: Production
+
+security:
+  - bearerAuth: []
+
+paths:
+  /jobs:
+    post:
+      summary: Create a new job opening
+      tags: [Jobs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCreate'
+      responses:
+        '201':
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          description: Invalid input
+
+    get:
+      summary: List all open job openings
+      tags: [Jobs]
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [open, closed, all]
+            default: open
+          description: Filter by job status
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Page size
+      responses:
+        '200':
+          description: Array of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+
+  /jobs/{jobId}:
+    parameters:
+      - in: path
+        name: jobId
+        required: true
+        schema:
+          type: string
+        description: Unique job ID
+
+    get:
+      summary: Get a specific job
+      tags: [Jobs]
+      responses:
+        '200':
+          description: A single job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '404':
+          description: Job not found
+
+    put:
+      summary: Update an existing job
+      tags: [Jobs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobUpdate'
+      responses:
+        '200':
+          description: Job updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          description: Invalid input
+        '404':
+          description: Job not found
+
+    delete:
+      summary: Delete (or close) a job opening
+      tags: [Jobs]
+      responses:
+        '204':
+          description: Job deleted or closed
+        '404':
+          description: Job not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Job:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique job identifier
+        title:
+          type: string
+          description: Job title
+        description:
+          type: string
+          description: Detailed description
+        location:
+          type: string
+          description: Job location
+        department:
+          type: string
+          description: Department name
+        postedBy:
+          type: string
+          description: Employee ID who posted the job
+        status:
+          type: string
+          enum: [open, closed]
+          description: Current job status
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    JobCreate:
+      type: object
+      required: [title, description, postedBy]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        department:
+          type: string
+        postedBy:
+          type: string
+          description: Employee ID
+
+    JobUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        department:
+          type: string
+        status:
+          type: string
+          enum: [open, closed]
