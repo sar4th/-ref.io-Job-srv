@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-posting-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job-posting-service
+  template:
+    metadata:
+      labels:
+        app: job-posting-service
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              'until nc -z postgres 5432; do echo "Waiting for Postgres..."; sleep 2; done;',
+            ]
+      containers:
+        - name: job-posting-service-container
+          image: sarathdev/job-posting-service
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DATABASE_URL
+              value: postgres://sarath:password@postgres:5432/job_db
+            - name: PORT
+              value: "3000"

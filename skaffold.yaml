@@ -1,0 +1,22 @@
+apiVersion: skaffold/v3
+kind: Config
+build:
+  artifacts:
+    - image: sarathdev/job-posting-service
+      context: .
+      sync:
+        manual:
+          - src: src/**/*.ts
+            dest: .
+      docker:
+        dockerfile: Dockerfile
+manifests:
+  rawYaml:
+    - k8s/configmap.yaml
+    - k8s/deployment.yaml
+    - k8s/service.yaml
+    - k8s/postgres-deployment.yaml
+    - k8s/postgres-service.yaml
+    - k8s/ingress.yaml
+deploy:
+  kubectl: {}
