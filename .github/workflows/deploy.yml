@@ -37,3 +37,12 @@ jobs:
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/job-posting-service:latest
+
+
+
+      - name: Deploy to Railway
+        uses: railwayapp/cli-action@v1
+        with:
+          command: up --service job-posting-service
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

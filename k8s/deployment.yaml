@@ -28,6 +28,6 @@ spec:
             - containerPort: 3000
           env:
             - name: DATABASE_URL
-              value: postgres://sarath:password@postgres:5432/job_db
+              value: postgresql://postgres:postgres@postgres:5432/job_posting
             - name: PORT
               value: "3000"
