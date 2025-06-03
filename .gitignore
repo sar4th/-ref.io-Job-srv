@@ -2,3 +2,4 @@ node_modules
 skaffold
 /src/generated/prisma
 .skaffold
+skaffold
