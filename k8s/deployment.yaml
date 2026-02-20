@@ -28,6 +28,6 @@ spec:
             - containerPort: 3000
           env:
             - name: DATABASE_URL
-              value: postgresql://postgres:bKhPxaWdlLotZMxHOtaJEicDvxsBvybk@postgres:5432/railway
+              value: 
             - name: PORT
               value: "3000"
